@@ -3,6 +3,8 @@ from enum import Enum
 import requests
 import aiohttp
 
+from typing import Optional, Dict
+
 
 class ProxyType(Enum):
     HTTP = 'http'
@@ -36,7 +38,7 @@ class Proxy:
         return f'{self.type.value}://{self.one_line_proxy}'
 
     @property
-    def auth(self) -> aiohttp.BasicAuth | None:
+    def auth(self) -> Optional[aiohttp.BasicAuth]:
         if self.username or self.password:
             return aiohttp.BasicAuth(self.username, self.password)
         return None
@@ -52,7 +54,7 @@ class Proxy:
         return {'http': self.full_url, 'https': self.full_url}
 
     @property
-    def aiohttp(self) -> dict[str, str]:
+    def aiohttp(self) -> Dict[str, str]:
         data = {'proxy': self.url}
         if self.auth:
             data['proxy_auth'] = self.auth
