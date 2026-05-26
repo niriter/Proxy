@@ -86,6 +86,3 @@ class Proxy:
     def load(self, proxy: str, schema: Optional[str] = None) -> None:
         self.start_data = proxy
         self.ip, self.port, self.username, self.password = parse(proxy, schema)
-
-    def id(self) -> str:
-        return f'{self.ip.replace(".", "")}{self.port}'
