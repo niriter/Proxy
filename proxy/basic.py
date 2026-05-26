@@ -9,7 +9,8 @@ from typing import Optional, Dict
 class ProxyType(str, Enum):
     HTTP = 'http'
     SOCKS4 = 'socks4'
-    SOCKS5 = 'socks5h'
+    SOCKS5 = 'socks5'
+    SOCKS5h = 'socks5h'
 
 
 class Proxy:

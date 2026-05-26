@@ -4,11 +4,12 @@ This module provides a simple way to handle proxies in Python. It includes two m
 
 ## ProxyType
 
-`ProxyType` is an enumeration that defines three types of proxies:
+`ProxyType` is a `(str, Enum)` enumeration that defines four types of proxies:
 
-- HTTP
-- SOCKS4
-- SOCKS5 (socks5h under the hood) **default
+- `HTTP` (`http`) — **default**
+- `SOCKS4` (`socks4`)
+- `SOCKS5` (`socks5`) — DNS resolved locally
+- `SOCKS5h` (`socks5h`) — DNS resolved on the proxy server
 
 ## Proxy
 
