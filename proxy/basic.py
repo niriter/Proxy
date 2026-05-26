@@ -1,6 +1,5 @@
 from enum import Enum
 
-import requests
 import aiohttp
 
 from typing import Optional, Dict, Union
@@ -69,17 +68,6 @@ class Proxy:
         if len(parsed) == 4:
             self.username = parsed[2]
             self.password = parsed[3]
-
-    def is_work(self) -> bool:
-        try:
-            ip = requests.get('https://api.my-ip.io/ip', proxies=self.requests, timeout=2).text
-            print(ip)
-            if ip != self.ip:
-                return False
-            return True
-        except Exception as e:
-            print(e)
-            return False
 
     def id(self) -> str:
         return f'{self.ip.replace(".", "")}{self.port}'

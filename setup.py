@@ -6,7 +6,6 @@ setup(
     packages=find_packages(),
     description='A simple proxy module',
     install_requires=[
-        'requests',
         'aiohttp'
     ],
 )

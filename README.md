@@ -34,7 +34,6 @@ This module provides a simple way to handle proxies in Python. It includes two m
 #### The `Proxy` class also includes several methods:
 
 - `load(raw_proxy)`: This method takes a raw proxy string and parses it to fill the attributes of the `Proxy` object.
-- `is_work()`: This method checks if the proxy is working by making a request to 'https://api.my-ip.io/ip' and comparing the returned IP with the proxy's IP.
 - `id()`: This method returns a unique identifier for the proxy, which is a combination of the IP and port, with the dots in the IP removed.
 
 ## Installation
@@ -55,9 +54,6 @@ from proxy import Proxy, ProxyType
 # Create a new Proxy object
 p = Proxy('192.168.1.1:8080', ProxyType.HTTP)
 
-# Check if the proxy is working
-if p.is_work():
-    print('The proxy is working')
-else:
-    print('The proxy is not working')
+print(p.url)        # http://192.168.1.1:8080
+print(p.aiohttp)    # {'proxy': 'http://192.168.1.1:8080'}
 ```
