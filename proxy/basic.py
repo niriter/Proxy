@@ -28,10 +28,21 @@ class Proxy:
 
         self.load(raw_proxy, schema=schema)
 
+    _MASKED_PASSWORD = '***'
+
     def __str__(self) -> str:
+        """Safe string for logs — password is masked.
+
+        Use `full_url` / `aiohttp` / `requests` for the real proxy string with
+        credentials.
+        """
         if self.username or self.password:
-            return f'{self.type.value}://{self.username}:{self.password}@{self.ip}:{self.port}'
+            masked = self._MASKED_PASSWORD if self.password else ''
+            return f'{self.type.value}://{self.username}:{masked}@{self.ip}:{self.port}'
         return f'{self.type.value}://{self.ip}:{self.port}'
+
+    def __repr__(self) -> str:
+        return f'Proxy({self})'
 
     @property
     def url(self) -> str:
