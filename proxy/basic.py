@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from .parser import parse
 
@@ -43,6 +43,23 @@ class Proxy:
 
     def __repr__(self) -> str:
         return f'Proxy({self})'
+
+    def _identity(self) -> Tuple[ProxyType, str, str, str, str]:
+        """Tuple of fields that define proxy equality and hash.
+
+        Note: Proxy is mutable, so calling `load()` after putting an instance
+        into a set/dict makes the hash inconsistent — the entry will be
+        unreachable. Treat instances as values: build once, don't mutate.
+        """
+        return (self.type, self.ip, self.port, self.username, self.password)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Proxy):
+            return NotImplemented
+        return self._identity() == other._identity()
+
+    def __hash__(self) -> int:
+        return hash(self._identity())
 
     @property
     def url(self) -> str:
