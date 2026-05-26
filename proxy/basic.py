@@ -1,6 +1,7 @@
 from enum import Enum
+from typing import Dict, Optional
 
-from typing import Dict
+from .parser import parse
 
 
 class ProxyType(str, Enum):
@@ -11,7 +12,12 @@ class ProxyType(str, Enum):
 
 
 class Proxy:
-    def __init__(self, raw_proxy: str, proxy_type: ProxyType = ProxyType.HTTP) -> None:
+    def __init__(
+        self,
+        raw_proxy: str,
+        proxy_type: ProxyType = ProxyType.HTTP,
+        schema: Optional[str] = None,
+    ) -> None:
         self.ip: str = ''
         self.port: str = ''
         self.username: str = ''
@@ -20,7 +26,7 @@ class Proxy:
 
         self.start_data: str = ''
 
-        self.load(raw_proxy)
+        self.load(raw_proxy, schema=schema)
 
     def __str__(self) -> str:
         if self.username or self.password:
@@ -49,14 +55,9 @@ class Proxy:
     def aiohttp(self) -> Dict[str, str]:
         return {'proxy': self.full_url}
 
-    def load(self, proxy: str) -> None:
+    def load(self, proxy: str, schema: Optional[str] = None) -> None:
         self.start_data = proxy
-        parsed = self.start_data.split(':')
-        self.ip = parsed[0]
-        self.port = parsed[1]
-        if len(parsed) == 4:
-            self.username = parsed[2]
-            self.password = parsed[3]
+        self.ip, self.port, self.username, self.password = parse(proxy, schema)
 
     def id(self) -> str:
         return f'{self.ip.replace(".", "")}{self.port}'

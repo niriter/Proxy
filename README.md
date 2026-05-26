@@ -56,3 +56,24 @@ p = Proxy('192.168.1.1:8080', ProxyType.HTTP)
 print(p.url)        # http://192.168.1.1:8080
 print(p.aiohttp)    # {'proxy': 'http://192.168.1.1:8080'}
 ```
+
+## Input formats
+
+The constructor accepts several input forms, detected automatically:
+
+```python
+Proxy('192.168.1.1:8080')                              # host:port
+Proxy('192.168.1.1:8080:alice:secret')                 # host:port:user:pass (legacy)
+Proxy('http://alice:secret@192.168.1.1:8080')          # URL with scheme
+Proxy('alice:secret@192.168.1.1:8080')                 # URL without scheme
+```
+
+For non-standard field orders, pass an explicit `schema`:
+
+```python
+Proxy('alice:secret:192.168.1.1:8080', schema='user:pass:host:port')
+Proxy('8080,192.168.1.1,secret,alice', schema='port,ip,password,username')
+```
+
+Schema separator is whatever non-alphanumeric character is used in the schema
+itself. Allowed field names: `host`/`ip`, `port`, `user`/`username`, `pass`/`password`.
