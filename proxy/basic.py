@@ -19,7 +19,7 @@ class Proxy:
         schema: Optional[str] = None,
     ) -> None:
         self.ip: str = ''
-        self.port: str = ''
+        self.port: int = 0
         self.username: str = ''
         self.password: str = ''
         self.type: ProxyType = proxy_type
@@ -44,7 +44,7 @@ class Proxy:
     def __repr__(self) -> str:
         return f'Proxy({self})'
 
-    def _identity(self) -> Tuple[ProxyType, str, str, str, str]:
+    def _identity(self) -> Tuple[ProxyType, str, int, str, str]:
         """Tuple of fields that define proxy equality and hash.
 
         Note: Proxy is mutable, so calling `load()` after putting an instance

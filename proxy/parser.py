@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 from urllib.parse import urlsplit
 
 
@@ -11,7 +11,18 @@ _FIELD_ALIASES = {
 }
 
 
-def parse_with_schema(s: str, schema: str) -> Tuple[str, str, str, str]:
+def _coerce_port(raw: Union[str, int], context: str) -> int:
+    """Convert `raw` (str or int) to a port int and validate range 1–65535."""
+    try:
+        port = int(raw)
+    except (TypeError, ValueError):
+        raise ValueError(f"Invalid port {raw!r} in {context}") from None
+    if not 1 <= port <= 65535:
+        raise ValueError(f"Port {port} out of range 1–65535 in {context}")
+    return port
+
+
+def parse_with_schema(s: str, schema: str) -> Tuple[str, int, str, str]:
     """Parse `s` according to explicit `schema` like 'host:port:user:pass'.
 
     Separator is whatever non-alphanumeric character appears in the schema
@@ -43,45 +54,46 @@ def parse_with_schema(s: str, schema: str) -> Tuple[str, str, str, str]:
         )
 
     mapping = dict(zip(fields, parts))
-    return (
-        mapping.get('host', ''),
-        mapping.get('port', ''),
-        mapping.get('user', ''),
-        mapping.get('pass', ''),
-    )
+    host = mapping.get('host', '')
+    if not host:
+        raise ValueError(f"Empty host in {s!r}")
+    port = _coerce_port(mapping.get('port', ''), s)
+    return host, port, mapping.get('user', ''), mapping.get('pass', '')
 
 
-def parse_url(s: str) -> Tuple[str, str, str, str]:
+def parse_url(s: str) -> Tuple[str, int, str, str]:
     """Parse URL form like 'http://user:pass@host:port'."""
     u = urlsplit(s)
     host = u.hostname
-    port = u.port
+    raw_port = u.port
     if not host:
         raise ValueError(f"Bad proxy URL (no host): {s!r}")
-    if port is None:
+    if raw_port is None:
         raise ValueError(f"Bad proxy URL (no port): {s!r}")
-    return host, str(port), u.username or '', u.password or ''
+    port = _coerce_port(raw_port, s)
+    return host, port, u.username or '', u.password or ''
 
 
-def parse_legacy(s: str) -> Tuple[str, str, str, str]:
+def parse_legacy(s: str) -> Tuple[str, int, str, str]:
     """Parse legacy form 'host:port' or 'host:port:user:pass'."""
     parts = s.split(':')
     if len(parts) == 2:
-        host, port, user, pwd = parts[0], parts[1], '', ''
+        host, raw_port, user, pwd = parts[0], parts[1], '', ''
     elif len(parts) == 4:
-        host, port, user, pwd = parts[0], parts[1], parts[2], parts[3]
+        host, raw_port, user, pwd = parts[0], parts[1], parts[2], parts[3]
     else:
         raise ValueError(
             f"Legacy form must be 'host:port' or 'host:port:user:pass', "
             f"got {len(parts)} parts in {s!r}"
         )
 
-    if not host or not port:
-        raise ValueError(f"Empty host or port in {s!r}")
+    if not host:
+        raise ValueError(f"Empty host in {s!r}")
+    port = _coerce_port(raw_port, s)
     return host, port, user, pwd
 
 
-def parse(s: str, schema: Optional[str] = None) -> Tuple[str, str, str, str]:
+def parse(s: str, schema: Optional[str] = None) -> Tuple[str, int, str, str]:
     """Parse a proxy string. Returns (host, port, user, pass).
 
     Priority:
