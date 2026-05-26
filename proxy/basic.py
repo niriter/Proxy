@@ -6,7 +6,7 @@ import aiohttp
 from typing import Optional, Dict
 
 
-class ProxyType(Enum):
+class ProxyType(str, Enum):
     HTTP = 'http'
     SOCKS4 = 'socks4'
     SOCKS5 = 'socks5h'
