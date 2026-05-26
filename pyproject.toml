@@ -8,9 +8,7 @@ dynamic = ["version"]
 description = "Simple universal Proxy module"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = [
-    "aiohttp",
-]
+dependencies = []
 
 [tool.hatch.version]
 source = "vcs"

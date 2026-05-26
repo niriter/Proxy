@@ -23,12 +23,11 @@ This module provides a simple way to handle proxies in Python. It includes two m
 
 #### The `Proxy` class includes these properties:
 
-- `url`: This property returns the URL of the proxy.
+- `url`: This property returns the URL of the proxy (no credentials).
 - `full_url`: This property returns the full URL of the proxy, including the username and password (if they exist).
-- `auth`: This property returns an `aiohttp.BasicAuth` object if the proxy requires authentication, or `None` otherwise.
 - `one_line_proxy`: This property returns a one-line representation of the proxy, including the username and password (if they exist).
 - `requests`: This property returns a dictionary that can be used as the `proxies` parameter in a `requests` call.
-- `aiohttp`: This property returns a dictionary that can be used as the `proxy` parameter in an `aiohttp` call.
+- `aiohttp`: This property returns a dictionary that can be spread into an `aiohttp` call (e.g. `session.get(url, **proxy.aiohttp)`). Credentials are embedded in the proxy URL — aiohttp [supports this natively](https://docs.aiohttp.org/en/stable/client_advanced.html#proxy-support).
 
 
 #### The `Proxy` class also includes several methods:
