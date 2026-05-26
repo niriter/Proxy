@@ -13,7 +13,7 @@ class ProxyType(Enum):
 
 
 class Proxy:
-    def __init__(self, raw_proxy: str, proxy_type: ProxyType = ProxyType.SOCKS5):
+    def __init__(self, raw_proxy: str, proxy_type: ProxyType = ProxyType.HTTP):
         self.ip = ''
         self.port = ''
         self.username = ''
